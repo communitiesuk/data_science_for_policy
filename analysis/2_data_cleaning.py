@@ -26,11 +26,29 @@ def save(df,
 
 
 ''' Commuting '''
+# Transport mapping:
+transport_mapping = {
+    "Walk":"Walk",
+    'Pedal cycle':"Bicycle",
+    'Motorcycle':"Bicycle",
+    'Car or van driver':"Car",
+    'Car or van passenger':"Car",
+    'Bus in London':"Bus",
+    'Other local bus':"Bus",
+    'Non-local bus':"Bus",
+    'London Underground':"Rail",
+    'Surface Rail':"Rail",
+    'Taxi or minicab':"Other",
+    'Other public transport':"Other",
+    'Other private transport':"Other"
+}
 # Commuting type
 df = pd.read_csv("data/raw_data/average_trips_by_type.csv")
 df = df[["Year","Main mode","Commuting"]]
 df.columns = ["year","variable","value"]
 df.variable = [x.split("[")[0].strip() for x in df.variable]
+df.variable = [transport_mapping.get(x,x) for x in df.variable]
+df = df.groupby(["year","variable"]).value.sum().reset_index()
 df = fdm.col_to_perc(df,"All modes")
 filename="transport_type_commuting"
 df.to_csv(f"{filepath}{filename}.csv",index=False)
@@ -40,6 +58,8 @@ df = pd.read_csv("data/raw_data/average_trips_by_type.csv")
 df = df[["Year","Main mode","All purposes"]]
 df.columns = ["year","variable","value"]
 df.variable = [x.split("[")[0].strip() for x in df.variable]
+df.variable = [transport_mapping.get(x,x) for x in df.variable]
+df = df.groupby(["year","variable"]).value.sum().reset_index()
 df = fdm.col_to_perc(df,"All modes")
 filename="transport_type_all"
 df.to_csv(f"{filepath}{filename}.csv",index=False)
@@ -51,6 +71,16 @@ df.to_csv(f"{filepath}{filename}.csv",index=False)
 df = pd.read_excel("data/raw_data/working_from_home_by_income.xlsx",skiprows=6)
 df.rename(inplace=True, columns={"Unnamed: 0":"type"})
 df = pd.melt(df,id_vars=["type"],value_vars=df.columns.tolist()[1:])
+df.variable = [x[:-1] for x in df.variable]
+inomce_mapping = { 
+    '£10,000 up to £15,000':'£10,000 - £15,000', 
+    '£15,000 up to £20,000':'£15,000 - £20,000',
+    '£20,000 up to £30,000':'£20,000 - £30,000', 
+    '£30,000 up to £40,000':'£30,000 - £40,000',
+    '£40,000 up to £50,000':'£40,000 - £50,000',
+    '£50,000 or more':'£50,000+'
+}
+df.variable = [inomce_mapping.get(x,x) for x in df.variable]
 filename="working_from_home_by_income"
 df.to_csv(f"{filepath}{filename}.csv",index=False)
 

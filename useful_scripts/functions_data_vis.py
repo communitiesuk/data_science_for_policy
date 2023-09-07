@@ -74,25 +74,33 @@ def line_chart(data,
                col = "date",
                var = "variable",
                val = "value",
+               data_format = "{:,.1f}%",
+               y_title = "None",
+               y_limit = None,
                colours = colours):
     f, ax = plt.subplots(1, figsize=(6,3))
 
+    
     names = data[var].unique().tolist()
     colours = colours[0:len(names)]
     chart_input = zip(names,colours)
     for la,colour in chart_input:
-        df_filtered = data[data[var] == la].rename(columns={"value":var})
+        df_filtered = data[data[var] == la].rename(columns={"value":la}).reset_index(drop=True)
         df_filtered.plot(x="date",y=la,rot=0,linewidth=2,ax=ax,color=colour)
 
     handles, labels = ax.get_legend_handles_labels()
-    leg = data[var].unique().tolist()
-    ax.legend(handles[::-1],leg,loc='center',bbox_to_anchor=(0.5,-0.35), ncol=3, frameon=False)
+    ax.legend(handles,names,loc='center',bbox_to_anchor=(0.5,-0.25), ncol=3, frameon=False)
 
     vals = ax.get_yticks()
     ax.set_yticks(vals)
-    ax.set_yticklabels(["{:,.1f}%".format(x) for x in vals])
+    ax.set_yticklabels([data_format.format(x) for x in vals])
+
+    if y_limit != None:
+        plt.ylim(y_limit)
 
     ax.set(xlabel=None)
+    if y_title != "None":
+        plt.ylabel(y_title)
 
     ax.set_title(title, fontweight='bold')
     plt.savefig(f"output/visualisations/{filename}.png",format="png",bbox_inches="tight",dpi=1000)

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import os
 import sys
+os.environ['USE_PYGEOS'] = '0'
 import geopandas as gpd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -29,6 +30,7 @@ def create_map(data,
                map,
                title,
                filename,
+               leg_title,
                text_inc = True,
                text_size = 3,
                dpi = 1000):
@@ -58,7 +60,7 @@ def create_map(data,
     
     ## Format the legend using the custom add_legend() function
     lgd = data_vis.get_legend()
-    fm.add_legend(lgd, ax, title="School Absence (%)",text_size=9)
+    fm.add_legend(lgd, ax, title=leg_title,text_size=9)
 
     # Remove axis
     ax.axis('off')

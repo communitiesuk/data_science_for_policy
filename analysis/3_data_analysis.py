@@ -4,6 +4,7 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+os.environ['USE_PYGEOS'] = '0'
 import geopandas as gpd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -57,6 +58,7 @@ fdv.create_map(
     map_la22,
     "Percentage of employees who work from home in\nEngland & Wales by Local Authority",
     "work_from_home",
+    "Work from home (%)",
     text_inc = False
 )
 
@@ -67,6 +69,7 @@ fdv.create_map(
     map_la22,
     "Percentage of employees who travel to work by car\nin England & Wales by Local Authority",
     "travel_by_car",
+    "Travel by car (%)",
     text_inc = False
 )
 
@@ -78,6 +81,7 @@ fdv.create_map(
     map_la22,
     "Percentage of employees who travel to work other than by\ncar in England & Wales by Local Authority",
     "travel_by_not_car",
+    "Travel by non-car (%)",
     text_inc = False
 )
 
@@ -106,7 +110,7 @@ df = df.sort_values(by=["CPI_type","date"]).reset_index(drop=True)
 df.date = [x.strftime("%b") + " " + str(x.year)[-2:] for x in df.date]
 fdv.line_chart(
     df,
-    "Annual Consumer Price Index changes",
+    "Monthly Consumer Price Index changes",
     "cpi_monthly",
     var = "CPI_type",
     data_format = "{:,.0f}%",
